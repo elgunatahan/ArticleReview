@@ -1,3 +1,4 @@
+using Domain.Interfaces.Proxies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ReviewApi.Controllers
@@ -12,10 +13,12 @@ namespace ReviewApi.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly IArticleApiProxy _articleApiProxy;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, IArticleApiProxy articleApiProxy)
         {
             _logger = logger;
+            _articleApiProxy = articleApiProxy;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
@@ -28,6 +31,14 @@ namespace ReviewApi.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet("namee")]
+        public async Task<ActionResult> Getg()
+        {
+            var result = await _articleApiProxy.GetAsync();
+
+            return Ok(result);
         }
     }
 }

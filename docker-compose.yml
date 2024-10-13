@@ -1,0 +1,64 @@
+version: '3.4'
+
+services:
+  articleapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - MONGO_CONNECTION_STRING=mongodb://mongodb_article:27017/articleDB
+    image: ${DOCKER_REGISTRY-}articleapi
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    build:
+      context: .
+      dockerfile: Services/Article/ArticleApi/Dockerfile
+    depends_on:
+      - mongodb_article
+    networks:
+      - my_network
+
+  reviewapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8082
+      - ASPNETCORE_HTTPS_PORTS=8083
+      - MONGO_CONNECTION_STRING=mongodb://mongodb_review:27017/reviewDB
+      - ARTICLE_API_BASE_URL=http://articleapi:8080
+    image: ${DOCKER_REGISTRY-}reviewapi
+    ports:
+      - "6000:8082"
+      - "6001:8083"
+    build:
+      context: .
+      dockerfile: Services/Review/ReviewApi/Dockerfile
+    depends_on:
+      - mongodb_review
+    networks:
+      - my_network
+
+  mongodb_article:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data_article:/data/db
+    networks:
+      - my_network
+
+  mongodb_review:
+    image: mongo
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data_review:/data/db
+    networks:
+      - my_network
+
+volumes:
+  mongo_data_article:
+  mongo_data_review:
+
+networks:
+  my_network:

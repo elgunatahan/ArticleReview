@@ -5,23 +5,20 @@
     <!--<Nullable>enable</Nullable>-->
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
-    <UserSecretsId>fef36cd2-774e-4bba-8919-2a7acfdb2ac6</UserSecretsId>
+    <UserSecretsId>1183eb04-8211-486c-bdd9-597338a3d340</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..\..</DockerfileContext>
-    <DockerComposeProjectPath>..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
   <ItemGroup>
-	<PackageReference Include="FluentValidation" Version="11.10.0" />
-	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
-	<PackageReference Include="Microsoft.AspNetCore.OData" Version="9.0.0" />
-	<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
+    <ProjectReference Include="..\Proxies\Proxies.csproj" />
   </ItemGroup>
 
 </Project>

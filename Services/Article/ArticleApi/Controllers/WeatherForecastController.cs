@@ -29,5 +29,13 @@ namespace ArticleApi.Controllers
             })
             .ToArray();
         }
+
+
+
+        [HttpGet("name")]
+        public IActionResult GetF()
+        {
+            return Ok("Article api");
+        }
     }
 }
