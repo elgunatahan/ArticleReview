@@ -1,5 +1,8 @@
 ﻿using Domain.Interfaces.Proxies;
+using Domain.Interfaces.Proxies.Responses;
 using Microsoft.Extensions.Logging;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Proxies
 {
@@ -14,13 +17,29 @@ namespace Proxies
             _logger = logger;
         }
 
-        public async Task<string> GetAsync()
+        public async Task<GetArticlesItemResponse> GetByIdAsync(Guid id)
         {
-            HttpResponseMessage responseMessage = await _httpClient.GetAsync("weatherforecast/name");
+            HttpResponseMessage responseMessage = await _httpClient.GetAsync($"api/v1/articles?$select=id&$filter=Id eq {id}");
+
+            if (responseMessage.IsSuccessStatusCode)
+            {
+                //var result = await responseMessage.Content.ReadFromJsonAsync<GetArticlesResponse>();
+
+                var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
+
+                // JSON içindeki 'value' alanını deserialize etme
+                var result = JsonSerializer.Deserialize<List<GetArticlesItemResponse>>(jsonResponse);
+
+                return result.FirstOrDefault();
+
+                //return result;
+            }
 
             string responseContent = await responseMessage.Content.ReadAsStringAsync();
 
-            return responseContent + "dönen sonuç";
+            _logger.LogError(responseContent);
+
+            throw new Exception(responseContent);
         }
     }
 }

@@ -32,13 +32,5 @@ namespace ReviewApi.Controllers
             })
             .ToArray();
         }
-
-        [HttpGet("namee")]
-        public async Task<ActionResult> Getg()
-        {
-            var result = await _articleApiProxy.GetAsync();
-
-            return Ok(result);
-        }
     }
 }

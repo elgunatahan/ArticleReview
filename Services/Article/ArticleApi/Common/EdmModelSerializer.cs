@@ -5,6 +5,7 @@ using MongoDB.Bson.Serialization;
 
 namespace ArticleApi.Common
 {
+
     public class EdmModelSerializer : IBsonSerializer<IEdmModel>
     {
         public Type ValueType => typeof(IEdmModel);

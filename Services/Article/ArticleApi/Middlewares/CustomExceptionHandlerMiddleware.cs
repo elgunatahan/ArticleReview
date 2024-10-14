@@ -8,10 +8,12 @@ namespace ArticleApi.Middlewares
     public class CustomExceptionHandlerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
         private readonly ErrorCodeMaps _errorCodeMaps;
 
-        public CustomExceptionHandlerMiddleware(RequestDelegate next, ErrorCodeMaps errorCodeMaps)
+        public CustomExceptionHandlerMiddleware(RequestDelegate next, ILogger<CustomExceptionHandlerMiddleware> logger, ErrorCodeMaps errorCodeMaps)
         {
+            _logger = logger;
             _next = next;
             _errorCodeMaps = errorCodeMaps;
         }
@@ -25,6 +27,8 @@ namespace ArticleApi.Middlewares
             catch (Exception ex)
             {
                 var knownEx = GetKnownException(ex);
+
+                _logger.LogError(knownEx.Result);
 
                 await HandleKnownException(context, knownEx.Result, knownEx.Code);
             }

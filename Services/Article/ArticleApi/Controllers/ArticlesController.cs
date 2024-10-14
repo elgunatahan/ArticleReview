@@ -2,16 +2,15 @@ using Application.Commands.Article.Delete;
 using Application.Queries.Article.GetAll;
 using ArticleApi.Common;
 using ArticleApi.Models.Requests;
+using Domain.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 
 namespace ArticleApi.Controllers
 {
-    //[ApiController]
-    //[Route("api/v1/[controller]")]
     [ApiController]
-    [Route("odata/v1/[controller]")]
+    [Route("api/v1/[controller]")]
     public class ArticlesController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -58,9 +57,13 @@ namespace ArticleApi.Controllers
 
         [HttpGet]
         [EnableQuery]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get(ODataQueryOptions<ArticleDto> queryOptions, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(new GetAllArticlesQuery());
+            var result = await _mediator.Send(new GetAllArticlesQuery()
+            {
+                QueryOptions = queryOptions
+            }, cancellationToken);
+
             return Ok(result);
         }
     }

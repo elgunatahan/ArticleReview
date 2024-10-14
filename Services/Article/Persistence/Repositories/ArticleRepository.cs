@@ -13,24 +13,26 @@ namespace Persistence.Repositories
 
         public IQueryable<ArticleDto> GetQueryable()
         {
-            // IQueryable kullanarak sorguyu doğrudan veritabanında çalıştırın
-            return _collection.AsQueryable().Select(x=> new ArticleDto()
-            {
-                ArticleContent = x.ArticleContent,
-                Author = x.Author,
-                CreatedAt = x.CreatedAt,
-                CreatedBy = x.CreatedBy,
-                Id = x.Id,
-                IsDeleted = x.IsDeleted,
-                PublishDate = x.PublishDate,
-                StarCount = x.StarCount,
-                Title = x.Title,
-                UpdatedAt = x.UpdatedAt,
-                UpdatedBy = x.UpdatedBy,
-                Version = x.Version
-            });
+            return _collection
+                .AsQueryable()
+                .Where(x => x.IsDeleted == false)
+                .Select(x => new ArticleDto()
+                {
+                    ArticleContent = x.ArticleContent,
+                    Author = x.Author,
+                    CreatedAt = x.CreatedAt,
+                    CreatedBy = x.CreatedBy,
+                    Id = x.Id,
+                    IsDeleted = x.IsDeleted,
+                    PublishDate = x.PublishDate,
+                    StarCount = x.StarCount,
+                    Title = x.Title,
+                    UpdatedAt = x.UpdatedAt,
+                    UpdatedBy = x.UpdatedBy,
+                    Version = x.Version
+                });
         }
-
+            
         public async Task CreateAsync(Article article, CancellationToken cancellationToken)
         {
             await InsertOneWithVersioning((ArticleDocument)article, article, cancellationToken);

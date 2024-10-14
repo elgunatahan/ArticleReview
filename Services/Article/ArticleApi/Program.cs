@@ -4,28 +4,54 @@ using Application.Common.CurrentUser;
 using ArticleApi.Common;
 using ArticleApi.Middlewares;
 using Domain.Dtos;
-using Domain.Entities;
 using Domain.Repositories;
 using FluentValidation;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 using Persistence;
 using Persistence.Repositories;
+using Serilog.Events;
+using Serilog.Formatting.Json;
+using Serilog;
 using System.Reflection;
+using Serilog.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var minimumLevelStr = builder.Configuration["Logging:LogLevel:Default"];
+if (!Enum.TryParse(minimumLevelStr, out LogLevel minimumLevel))
+{
+    minimumLevel = LogLevel.Debug;
+}
+
+var minimumSerilogLogLevel = (LogEventLevel)minimumLevel;
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", minimumSerilogLogLevel)
+    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", minimumSerilogLogLevel)
+    .MinimumLevel.Override("System.Net.Http.HttpClient", minimumSerilogLogLevel)
+    .Enrich.FromLogContext()
+    .Enrich.WithExceptionDetails()
+    .WriteTo.Console(new JsonFormatter())
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
+var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConnectionString;
+    options.InstanceName = "ArticleApi_";
+});
+
 var mongoUrlBuilder = new MongoUrlBuilder(Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING"));
 var mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
-BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
-BsonSerializer.RegisterSerializer(typeof(IEdmModel), new EdmModelSerializer());
+//BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
+//BsonSerializer.RegisterSerializer(typeof(IEdmModel), new EdmModelSerializer());
 
 MongoDbPersistence.Configure();
 
@@ -94,9 +120,8 @@ app.Run();
 static IEdmModel GetEdmModel()
 {
     var builder = new ODataConventionModelBuilder();
-    // Modelinize entity'leri ekleyin
-    //builder.EntitySet<ArticleDto>("Article");
-    builder.EntitySet<ArticleDto>("Article")
-       .EntityType.Select();
+
+    builder.EntitySet<ArticleDto>("Article");
+
     return builder.GetEdmModel();
 }

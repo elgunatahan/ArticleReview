@@ -7,6 +7,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
       - MONGO_CONNECTION_STRING=mongodb://mongodb_article:27017/articleDB
+      - REDIS_CONNECTION_STRING=redis_article:6379
     image: ${DOCKER_REGISTRY-}articleapi
     ports:
       - "5000:8080"
@@ -16,6 +17,7 @@ services:
       dockerfile: Services/Article/ArticleApi/Dockerfile
     depends_on:
       - mongodb_article
+      - redis_article
     networks:
       - my_network
 
@@ -25,6 +27,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8082
       - ASPNETCORE_HTTPS_PORTS=8083
       - MONGO_CONNECTION_STRING=mongodb://mongodb_review:27017/reviewDB
+      - REDIS_CONNECTION_STRING=redis_review:6379
       - ARTICLE_API_BASE_URL=http://articleapi:8080
     image: ${DOCKER_REGISTRY-}reviewapi
     ports:
@@ -35,6 +38,7 @@ services:
       dockerfile: Services/Review/ReviewApi/Dockerfile
     depends_on:
       - mongodb_review
+      - redis_review
     networks:
       - my_network
 
@@ -53,6 +57,20 @@ services:
       - "27018:27017"
     volumes:
       - mongo_data_review:/data/db
+    networks:
+      - my_network
+
+  redis_article:
+    image: redis:6
+    ports:
+      - "6379:6379"
+    networks:
+      - my_network
+
+  redis_review:
+    image: redis:6
+    ports:
+      - "6380:6379"
     networks:
       - my_network
 
