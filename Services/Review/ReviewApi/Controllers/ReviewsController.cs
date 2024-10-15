@@ -1,5 +1,6 @@
 using Application.Commands.Review.Delete;
 using Application.Queries.Review.GetAll;
+using Application.Queries.Review.GetById;
 using Domain.Dtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -77,6 +78,22 @@ namespace ReviewApi.Controllers
             var result = await _mediator.Send(new GetAllReviewsQuery()
             {
                 QueryOptions = queryOptions
+            }, cancellationToken);
+
+            return Ok(result);
+        }
+
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetReviewByIdRepresentation))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,MEMBER,ONLYREVIEWAPI")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetReviewByIdQuery()
+            {
+                Id = id
             }, cancellationToken);
 
             return Ok(result);

@@ -24,6 +24,7 @@ namespace Application.Commands.Review.Update
             {
                 throw new ArticleNotExistException(request.ArticleId);
             }
+
             Domain.Entities.Review review = await _reviewRepository.GetByIdAsync(request.Id, cancellationToken);
 
             if (review == null)

@@ -1,5 +1,6 @@
 using Application.Commands.Article.Delete;
 using Application.Queries.Article.GetAll;
+using Application.Queries.Article.GetById;
 using ArticleApi.Common;
 using ArticleApi.Models.Requests;
 using Domain.Dtos;
@@ -67,11 +68,26 @@ namespace ArticleApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ArticleDto>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
         [Authorize(Roles = "ADMIN,MEMBER,ONLYARTICLEAPI")]
-        public async Task<IActionResult> Get(ODataQueryOptions<ArticleDto> queryOptions, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetAll(ODataQueryOptions<ArticleDto> queryOptions, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAllArticlesQuery()
             {
                 QueryOptions = queryOptions
+            }, cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetArticleByIdRepresentation))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,MEMBER,ONLYARTICLEAPI")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(new GetArticleByIdQuery()
+            {
+                Id = id
             }, cancellationToken);
 
             return Ok(result);

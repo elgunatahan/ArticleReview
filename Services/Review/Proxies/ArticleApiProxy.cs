@@ -17,22 +17,22 @@ namespace Proxies
             _logger = logger;
         }
 
-        public async Task<GetArticlesItemResponse> GetByIdAsync(Guid id)
+        public async Task<GetArticleByIdProxyResponse> GetByIdAsync(Guid id)
         {
-            HttpResponseMessage responseMessage = await _httpClient.GetAsync($"api/v1/articles?$select=id&$filter=Id eq {id}");
+            HttpResponseMessage responseMessage = await _httpClient.GetAsync($"api/v1/articles/{id}");
 
             if (responseMessage.IsSuccessStatusCode)
             {
                 var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
 
-                var result = JsonSerializer.Deserialize<List<GetArticlesItemResponse>>(jsonResponse);
+                var result = JsonSerializer.Deserialize<GetArticleByIdProxyResponse>(jsonResponse);
 
-                return result.FirstOrDefault();
+                return result;
             }
 
             string responseContent = await responseMessage.Content.ReadAsStringAsync();
 
-            string message = $"Error occured on Proxy:{nameof(ArticleApiProxy)}, Method:GET Endpoint:api/v1/articles, with StatusCode:{responseMessage.StatusCode}";
+            string message = $"Error occured on Proxy:{nameof(ArticleApiProxy)}, Method:GET Endpoint:api/v1/articles/{id}, with StatusCode:{responseMessage.StatusCode}";
 
             _logger.LogError(message);
 

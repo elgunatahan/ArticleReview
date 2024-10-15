@@ -4,6 +4,6 @@ namespace Domain.Interfaces.Proxies
 {
     public interface IArticleApiProxy
     {
-        Task<GetArticlesItemResponse> GetByIdAsync(Guid id);
+        Task<GetArticleByIdProxyResponse> GetByIdAsync(Guid id);
     }
 }
