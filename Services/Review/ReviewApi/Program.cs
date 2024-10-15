@@ -85,6 +85,24 @@ builder.Services.AddHttpClient<IArticleApiProxy, ArticleApiProxy>(client =>
     client.BaseAddress = new Uri(Environment.GetEnvironmentVariable("ARTICLE_API_BASE_URL"));
 }).AddHttpMessageHandler<AuthTokenHandler>();
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.WebHost.ConfigureKestrel(serverOptions =>
+    {
+        serverOptions.ListenAnyIP(8080); // Use HTTP on port 5000
+    });
+}
+else
+{
+    builder.WebHost.ConfigureKestrel(serverOptions =>
+    {
+        serverOptions.ListenAnyIP(8081, listenOptions =>
+        {
+            listenOptions.UseHttps(); // Use HTTPS in non-development environments
+        });
+    });
+}
+
 builder.Services.AddControllers().AddOData(opt => opt
     .Select()
     .Filter()
@@ -162,6 +180,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseHttpsRedirection(); // Sadece production'da HTTPS'ye yönlendir
 }
 
 app.UseSwagger();

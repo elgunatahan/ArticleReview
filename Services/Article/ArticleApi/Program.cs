@@ -73,6 +73,26 @@ builder.Services.AddMediatR(cfg =>
 });
 builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(CreateArticleCommand)));
 
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.WebHost.ConfigureKestrel(serverOptions =>
+    {
+        serverOptions.ListenAnyIP(8080); // Use HTTP on port 5000
+    });
+}
+else
+{
+    builder.WebHost.ConfigureKestrel(serverOptions =>
+    {
+        serverOptions.ListenAnyIP(8081, listenOptions =>
+        {
+            listenOptions.UseHttps(); // Use HTTPS in non-development environments
+        });
+    });
+}
+
+
 builder.Services.AddControllers().AddOData(opt => opt
     .Select()
     .Filter()
@@ -150,6 +170,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseHttpsRedirection(); // Sadece production'da HTTPS'ye yönlendir
 }
 
 app.UseSwagger();

@@ -8,10 +8,34 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
+using Serilog;
+using Serilog.Events;
+using Serilog.Exceptions;
+using Serilog.Formatting.Json;
 using System.Reflection;
 using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var minimumLevelStr = builder.Configuration["Logging:LogLevel:Default"];
+if (!Enum.TryParse(minimumLevelStr, out LogLevel minimumLevel))
+{
+    minimumLevel = LogLevel.Debug;
+}
+
+var minimumSerilogLogLevel = (LogEventLevel)minimumLevel;
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", minimumSerilogLogLevel)
+    .MinimumLevel.Override("Microsoft.Hosting.Lifetime", minimumSerilogLogLevel)
+    .MinimumLevel.Override("System.Net.Http.HttpClient", minimumSerilogLogLevel)
+    .Enrich.FromLogContext()
+    .Enrich.WithExceptionDetails()
+    .WriteTo.Console(new JsonFormatter())
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
 
 var mongoUrlBuilder = new MongoUrlBuilder(Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING"));
 var mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
@@ -48,6 +72,24 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+if (builder.Environment.IsDevelopment())
+{
+    builder.WebHost.ConfigureKestrel(serverOptions =>
+    {
+        serverOptions.ListenAnyIP(8080); // Use HTTP on port 5000
+    });
+}
+else
+{
+    builder.WebHost.ConfigureKestrel(serverOptions =>
+    {
+        serverOptions.ListenAnyIP(8081, listenOptions =>
+        {
+            listenOptions.UseHttps(); // Use HTTPS in non-development environments
+        });
+    });
+}
+
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -58,6 +100,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseHttpsRedirection(); // Sadece production'da HTTPS'ye yönlendir
 }
 
 app.UseSwagger();

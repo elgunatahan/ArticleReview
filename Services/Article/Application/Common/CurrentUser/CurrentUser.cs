@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Application.Common.CurrentUser
 {
@@ -13,6 +13,6 @@ namespace Application.Common.CurrentUser
             _accessor = accessor;
         }
 
-        public string Username => HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+        public string Username => HttpContext.User.FindFirst(ClaimTypes.Name)?.Value;
     }
 }

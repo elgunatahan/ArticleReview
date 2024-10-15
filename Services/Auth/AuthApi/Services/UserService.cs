@@ -33,7 +33,7 @@ namespace AuthApi.Services
                 throw new AuthenticationFailedException();
             }
 
-            var token = GenerateJwtToken(user.Username, user.Role);
+            var token = GenerateJwtToken(user.Id, user.Username, user.Role);
 
             return token;
         }
@@ -43,12 +43,13 @@ namespace AuthApi.Services
             return BCrypt.Net.BCrypt.Verify(password, storedHash);
         }
 
-        private string GenerateJwtToken(string username, string role)
+        private string GenerateJwtToken(Guid userId, string username, string role)
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim(ClaimTypes.Name, username),
                 new Claim(ClaimTypes.Role, role)
             };
 
