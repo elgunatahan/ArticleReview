@@ -6,17 +6,21 @@ using ArticleApi.Middlewares;
 using Domain.Dtos;
 using Domain.Repositories;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Persistence;
 using Persistence.Repositories;
-using Serilog.Events;
-using Serilog.Formatting.Json;
 using Serilog;
-using System.Reflection;
+using Serilog.Events;
 using Serilog.Exceptions;
+using Serilog.Formatting.Json;
+using System.Reflection;
+using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,7 +43,6 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Add services to the container.
 var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
 
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -50,8 +53,6 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 var mongoUrlBuilder = new MongoUrlBuilder(Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING"));
 var mongoClient = new MongoClient(mongoUrlBuilder.ToMongoUrl());
-//BsonSerializer.RegisterSerializer(new GuidSerializer(BsonType.String));
-//BsonSerializer.RegisterSerializer(typeof(IEdmModel), new EdmModelSerializer());
 
 MongoDbPersistence.Configure();
 
@@ -72,7 +73,6 @@ builder.Services.AddMediatR(cfg =>
 });
 builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(CreateArticleCommand)));
 
-//builder.Services.AddControllers();
 builder.Services.AddControllers().AddOData(opt => opt
     .Select()
     .Filter()
@@ -83,11 +83,67 @@ builder.Services.AddControllers().AddOData(opt => opt
     .AddRouteComponents("odata", GetEdmModel())
     );
 
+var publicKey = Environment.GetEnvironmentVariable("JwtVK");
+if (string.IsNullOrEmpty(publicKey))
+{
+    throw new InvalidOperationException("JwtVK not found in environment variables.");
+}
+using var rsa = RSA.Create();
+rsa.ImportRSAPublicKey(Convert.FromBase64String(publicKey), out _);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Environment.GetEnvironmentVariable("JwtIssuer"),
+                    IssuerSigningKey = new RsaSecurityKey(rsa)
+                };
+            });
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddHttpContextAccessor();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Article API",
+        Version = "v1",
+        Description = "JWT Authorization for Article API"
+    });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+});
 
 var app = builder.Build();
 
@@ -96,20 +152,14 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseMiddleware<CustomExceptionHandlerMiddleware>();
-app.UseMiddleware<AuthenticationMiddleware>();
-
-// app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

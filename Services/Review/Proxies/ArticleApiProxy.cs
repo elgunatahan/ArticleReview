@@ -1,7 +1,7 @@
-﻿using Domain.Interfaces.Proxies;
+﻿using Application.Exceptions;
+using Domain.Interfaces.Proxies;
 using Domain.Interfaces.Proxies.Responses;
 using Microsoft.Extensions.Logging;
-using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace Proxies
@@ -23,23 +23,20 @@ namespace Proxies
 
             if (responseMessage.IsSuccessStatusCode)
             {
-                //var result = await responseMessage.Content.ReadFromJsonAsync<GetArticlesResponse>();
-
                 var jsonResponse = await responseMessage.Content.ReadAsStringAsync();
 
-                // JSON içindeki 'value' alanını deserialize etme
                 var result = JsonSerializer.Deserialize<List<GetArticlesItemResponse>>(jsonResponse);
 
                 return result.FirstOrDefault();
-
-                //return result;
             }
 
             string responseContent = await responseMessage.Content.ReadAsStringAsync();
 
-            _logger.LogError(responseContent);
+            string message = $"Error occured on Proxy:{nameof(ArticleApiProxy)}, Method:GET Endpoint:api/v1/articles, with StatusCode:{responseMessage.StatusCode}";
 
-            throw new Exception(responseContent);
+            _logger.LogError(message);
+
+            throw new ProxyException(message);
         }
     }
 }

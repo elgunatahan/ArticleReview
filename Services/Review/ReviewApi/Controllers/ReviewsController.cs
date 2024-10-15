@@ -2,6 +2,7 @@ using Application.Commands.Review.Delete;
 using Application.Queries.Review.GetAll;
 using Domain.Dtos;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using ReviewApi.Common;
@@ -9,8 +10,6 @@ using ReviewApi.Models.Requests;
 
 namespace ReviewApi.Controllers
 {
-    //[ApiController]
-    //[Route("api/v1/[controller]")]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class ReviewsController : ControllerBase
@@ -24,7 +23,11 @@ namespace ReviewApi.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status502BadGateway, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,ONLYREVIEWAPI")]
         public async Task<IActionResult> Create([FromBody] CreateReviewRequest request, CancellationToken cancellationToken)
         {
             var representation = await _mediator.Send(request.ToCommand(), cancellationToken);
@@ -34,7 +37,11 @@ namespace ReviewApi.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status502BadGateway, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,ONLYREVIEWAPI")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateReviewRequest request, CancellationToken cancellationToken)
         {
             await _mediator.Send(request.ToCommand(id), cancellationToken);
@@ -44,9 +51,10 @@ namespace ReviewApi.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(DefaultExceptionDto))]
-        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,ONLYREVIEWAPI")]
         public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteReviewCommand()
@@ -60,7 +68,10 @@ namespace ReviewApi.Controllers
 
 
         [HttpGet]
-        [EnableQuery]
+        [EnableQuery(MaxTop = 100, PageSize = 100)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,MEMBER,ONLYREVIEWAPI")]
         public async Task<IActionResult> Get(ODataQueryOptions<ReviewDto> queryOptions, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAllReviewsQuery()

@@ -5,9 +5,12 @@ using Domain.Dtos;
 using Domain.Interfaces.Proxies;
 using Domain.Repositories;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.Edm;
 using Microsoft.OData.ModelBuilder;
+using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Persistence;
 using Persistence.Repositories;
@@ -19,6 +22,7 @@ using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Formatting.Json;
 using System.Reflection;
+using System.Security.Cryptography;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +45,6 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
-// Add services to the container.
 var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
 
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -73,14 +76,15 @@ builder.Services.AddMediatR(cfg =>
 builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(CreateReviewCommand)));
 
 
+builder.Services.AddScoped<AuthTokenHandler>();
+
 builder.Services.AddHttpClient();
 
 builder.Services.AddHttpClient<IArticleApiProxy, ArticleApiProxy>(client =>
 {
     client.BaseAddress = new Uri(Environment.GetEnvironmentVariable("ARTICLE_API_BASE_URL"));
-});
+}).AddHttpMessageHandler<AuthTokenHandler>();
 
-//builder.Services.AddControllers();
 builder.Services.AddControllers().AddOData(opt => opt
     .Select()
     .Filter()
@@ -91,33 +95,83 @@ builder.Services.AddControllers().AddOData(opt => opt
     .AddRouteComponents("odata", GetEdmModel())
     );
 
+var publicKey = Environment.GetEnvironmentVariable("JwtVK");
+if (string.IsNullOrEmpty(publicKey))
+{
+    throw new InvalidOperationException("JwtVK not found in environment variables.");
+}
+using var rsa = RSA.Create();
+rsa.ImportRSAPublicKey(Convert.FromBase64String(publicKey), out _);
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Environment.GetEnvironmentVariable("JwtIssuer"),
+                    IssuerSigningKey = new RsaSecurityKey(rsa)
+                };
+            });
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddHttpContextAccessor();
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Review API",
+        Version = "v1",
+        Description = "JWT Authorization for Review API"
+    });
 
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\""
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+});
 
 var app = builder.Build();
 
- if (app.Environment.IsDevelopment())
- {
-     app.UseDeveloperExceptionPage();
- }
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 
-// app.UseHttpsRedirection();
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseMiddleware<CustomExceptionHandlerMiddleware>();
-app.UseMiddleware<AuthenticationMiddleware>();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

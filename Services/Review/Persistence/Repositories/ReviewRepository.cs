@@ -36,15 +36,15 @@ namespace Persistence.Repositories
             await InsertOneWithVersioning((ReviewDocument)review, review, cancellationToken);
         }
 
-        public async Task UpdateAsync(Review article, CancellationToken cancellationToken)
+        public async Task UpdateAsync(Review review, CancellationToken cancellationToken)
         {
             UpdateDefinition<ReviewDocument> updateDefinition = Builders<ReviewDocument>.Update
-                    .Set(nameof(ReviewDocument.ReviewContent), article.ReviewContent)
-                    .Set(nameof(ReviewDocument.Reviewer), article.Reviewer)
-                    .Set(nameof(ReviewDocument.ArticleId), article.ArticleId)
-                    .Set(nameof(ReviewDocument.IsDeleted), article.IsDeleted);
+                    .Set(nameof(ReviewDocument.ReviewContent), review.ReviewContent)
+                    .Set(nameof(ReviewDocument.Reviewer), review.Reviewer)
+                    .Set(nameof(ReviewDocument.ArticleId), review.ArticleId)
+                    .Set(nameof(ReviewDocument.IsDeleted), review.IsDeleted);
 
-            await UpdateOneWithVersioning(article, updateDefinition, cancellationToken: cancellationToken);
+            await UpdateOneWithVersioning(review, updateDefinition, cancellationToken: cancellationToken);
         }
 
         public async Task<Review> GetByIdAsync(Guid id, CancellationToken cancellationToken)

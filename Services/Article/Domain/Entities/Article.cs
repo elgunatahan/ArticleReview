@@ -31,14 +31,24 @@ namespace Domain.Entities
             IsDeleted = isDeleted;
             Audit = audit;
 
-            if (string.IsNullOrWhiteSpace(title))
+            if (string.IsNullOrWhiteSpace(Title))
             {
                 throw new ValidationException("Title is null or white space");
             }
 
-            if (StarCount < 0)
+            if (StarCount <= 0)
             {
                 throw new ValidationException("StarCount is below or equal to zero");
+            }
+
+            if (string.IsNullOrWhiteSpace(Author))
+            {
+                throw new ValidationException("Author is null or white space");
+            }
+
+            if (string.IsNullOrWhiteSpace(ArticleContent))
+            {
+                throw new ValidationException("ArticleContent is null or white space");
             }
         }
 
@@ -61,9 +71,19 @@ namespace Domain.Entities
                 throw new ValidationException("Title is null or white space");
             }
 
-            if (StarCount < 0)
+            if (StarCount <= 0)
             {
                 throw new ValidationException("StarCount is below or equal to zero");
+            }
+
+            if (string.IsNullOrWhiteSpace(Author))
+            {
+                throw new ValidationException("Author is null or white space");
+            }
+
+            if (string.IsNullOrWhiteSpace(ArticleContent))
+            {
+                throw new ValidationException("ArticleContent is null or white space");
             }
         }
 

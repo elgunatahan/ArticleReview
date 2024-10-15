@@ -1,9 +1,9 @@
-﻿using Application.Exceptions;
-using ReviewApi.Common;
+﻿using AuthApi.Common;
+using AuthApi.Exceptions;
 using System.Net;
 using System.Text.Json;
 
-namespace ReviewApi.Middlewares
+namespace AuthApi.Middlewares
 {
     public class CustomExceptionHandlerMiddleware
     {
@@ -13,8 +13,8 @@ namespace ReviewApi.Middlewares
 
         public CustomExceptionHandlerMiddleware(RequestDelegate next, ILogger<CustomExceptionHandlerMiddleware> logger, ErrorCodeMaps errorCodeMaps)
         {
-            _next = next;
             _logger = logger;
+            _next = next;
             _errorCodeMaps = errorCodeMaps;
         }
 
@@ -52,18 +52,6 @@ namespace ReviewApi.Middlewares
 
             switch (exception)
             {
-                case ProxyException proxyException:
-                    code = HttpStatusCode.BadGateway;
-                    exceptionType = proxyException.GetType().Name;
-                    result = JsonSerializer.Serialize(new DefaultExceptionDto
-                    {
-                        Errors = new List<string>
-                        {
-                            proxyException.Message
-                        },
-                        ErrorCode = _errorCodeMaps.MapDic.ContainsKey(exceptionType) ? _errorCodeMaps.MapDic[exceptionType] : 0
-                    });
-                    break;
                 case ValidationException validationException:
                     code = HttpStatusCode.BadRequest;
                     exceptionType = validationException.GetType().Name;
@@ -73,28 +61,15 @@ namespace ReviewApi.Middlewares
                         ErrorCode = _errorCodeMaps.MapDic.ContainsKey(exceptionType) ? _errorCodeMaps.MapDic[exceptionType] : 0
                     });
                     break;
-                case BaseBadRequestException baseBadRequestException:
-                    code = HttpStatusCode.BadRequest;
-                    exceptionType = baseBadRequestException.GetType().Name;
+                case AuthenticationFailedException authenticationFailedException:
+                    code = HttpStatusCode.Unauthorized;
+                    exceptionType = authenticationFailedException.GetType().Name;
 
                     result = JsonSerializer.Serialize(new DefaultExceptionDto
                     {
                         Errors = new List<string>
                         {
-                            baseBadRequestException.Message
-                        },
-                        ErrorCode = _errorCodeMaps.MapDic.ContainsKey(exceptionType) ? _errorCodeMaps.MapDic[exceptionType] : 0
-                    });
-                    break;
-                case BaseNotFoundException baseNotFoundException:
-                    code = HttpStatusCode.NotFound;
-                    exceptionType = baseNotFoundException.GetType().Name;
-
-                    result = JsonSerializer.Serialize(new DefaultExceptionDto
-                    {
-                        Errors = new List<string>
-                        {
-                            baseNotFoundException.Message
+                            authenticationFailedException.Message
                         },
                         ErrorCode = _errorCodeMaps.MapDic.ContainsKey(exceptionType) ? _errorCodeMaps.MapDic[exceptionType] : 0
                     });

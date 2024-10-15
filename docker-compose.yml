@@ -8,6 +8,8 @@ services:
       - ASPNETCORE_HTTPS_PORTS=8081
       - MONGO_CONNECTION_STRING=mongodb://mongodb_article:27017/articleDB
       - REDIS_CONNECTION_STRING=redis_article:6379
+      - JwtVK=${JwtVK}
+      - JwtIssuer=${JwtIssuer}
     image: ${DOCKER_REGISTRY-}articleapi
     ports:
       - "5000:8080"
@@ -29,6 +31,8 @@ services:
       - MONGO_CONNECTION_STRING=mongodb://mongodb_review:27017/reviewDB
       - REDIS_CONNECTION_STRING=redis_review:6379
       - ARTICLE_API_BASE_URL=http://articleapi:8080
+      - JwtVK=${JwtVK}
+      - JwtIssuer=${JwtIssuer}
     image: ${DOCKER_REGISTRY-}reviewapi
     ports:
       - "6000:8082"
@@ -74,9 +78,38 @@ services:
     networks:
       - my_network
 
+  authapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8084
+      - ASPNETCORE_HTTPS_PORTS=8085
+      - MONGO_CONNECTION_STRING=mongodb://mongodb_auth:27017/authDB
+      - JwtAK=${JwtAK}
+      - JwtIssuer=${JwtIssuer}
+    image: ${DOCKER_REGISTRY-}authapi
+    build:
+      context: .
+      dockerfile: Services/Auth/AuthApi/Dockerfile
+    ports:
+      - "7000:8084"
+      - "7001:8085"
+    depends_on:
+      - mongodb_auth
+    networks:
+      - my_network
+
+  mongodb_auth:
+    image: mongo
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo_data_auth:/data/db
+    networks:
+      - my_network
 volumes:
   mongo_data_article:
   mongo_data_review:
+  mongo_data_auth:
 
 networks:
   my_network:

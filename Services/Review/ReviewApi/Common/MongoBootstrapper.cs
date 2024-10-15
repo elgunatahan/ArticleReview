@@ -1,13 +1,13 @@
 using Domain.Entities;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
+using Persistence.Documents;
 
 namespace ReviewApi.Common
 {
     public class MongoBootstrapper
     {
         private readonly IMongoClient _mongoClient;
-        private readonly string _dbName;
         public MongoBootstrapper(IMongoClient client)
         {
             _mongoClient = client;
@@ -16,7 +16,7 @@ namespace ReviewApi.Common
         public void Migrate()
         {
             RegisterIgnoreExtraElementsBehaviour();
-            CreateArticleIndexes();
+            CreateReviewIndexes();
         }
 
         private void RegisterIgnoreExtraElementsBehaviour()
@@ -25,16 +25,16 @@ namespace ReviewApi.Common
             ConventionRegistry.Register("IgnoreExtraElements", conventionPack, type => true);
         }
 
-        private void CreateArticleIndexes()
+        private void CreateReviewIndexes()
         {
             var collection = _mongoClient
                 .GetDatabase("ReviewDB")
-                .GetCollection<Review>(nameof(Review));
+                .GetCollection<ReviewDocument>(nameof(Review));
 
-            collection.Indexes.CreateOne(new CreateIndexModel<Review>(
-                new IndexKeysDefinitionBuilder<Review>()
+            collection.Indexes.CreateOne(new CreateIndexModel<ReviewDocument>(
+                new IndexKeysDefinitionBuilder<ReviewDocument>()
                     .Ascending(c => c.ArticleId),
-                new CreateIndexOptions<Review> { Background = true }));
+                new CreateIndexOptions<ReviewDocument> { Background = true }));
         }
     }
 }

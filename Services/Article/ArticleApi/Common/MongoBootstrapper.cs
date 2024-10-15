@@ -1,13 +1,13 @@
 using Domain.Entities;
 using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
+using Persistence.Documents;
 
 namespace ArticleApi.Common
 {
     public class MongoBootstrapper
     {
         private readonly IMongoClient _mongoClient;
-        private readonly string _dbName;
         public MongoBootstrapper(IMongoClient client)
         {
             _mongoClient = client;
@@ -29,12 +29,12 @@ namespace ArticleApi.Common
         {
             var collection = _mongoClient
                 .GetDatabase("ArticleDB")
-                .GetCollection<Article>(nameof(Article));
+                .GetCollection<ArticleDocument>(nameof(Article));
 
-            collection.Indexes.CreateOne(new CreateIndexModel<Article>(
-                new IndexKeysDefinitionBuilder<Article>()
+            collection.Indexes.CreateOne(new CreateIndexModel<ArticleDocument>(
+                new IndexKeysDefinitionBuilder<ArticleDocument>()
                     .Ascending(c => c.Title),
-                new CreateIndexOptions<Article> { Background = true }));
+                new CreateIndexOptions<ArticleDocument> { Background = true }));
         }
     }
 }

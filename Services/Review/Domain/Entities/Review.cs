@@ -29,6 +29,16 @@ namespace Domain.Entities
             {
                 throw new ValidationException("ArticleId is empty guid");
             }
+
+            if (string.IsNullOrWhiteSpace(Reviewer))
+            {
+                throw new ValidationException("Reviewer is null or white space");
+            }
+
+            if (string.IsNullOrWhiteSpace(ReviewContent))
+            {
+                throw new ValidationException("ReviewContent is null or white space");
+            }
         }
 
         public void Update(
@@ -44,6 +54,16 @@ namespace Domain.Entities
             if (ArticleId == Guid.Empty)
             {
                 throw new ValidationException("ArticleId is empty guid");
+            }
+
+            if (string.IsNullOrWhiteSpace(Reviewer))
+            {
+                throw new ValidationException("Reviewer is null or white space");
+            }
+
+            if (string.IsNullOrWhiteSpace(ReviewContent))
+            {
+                throw new ValidationException("ReviewContent is null or white space");
             }
         }
 

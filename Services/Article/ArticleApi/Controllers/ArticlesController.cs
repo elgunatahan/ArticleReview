@@ -4,6 +4,7 @@ using ArticleApi.Common;
 using ArticleApi.Models.Requests;
 using Domain.Dtos;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 
@@ -22,7 +23,9 @@ namespace ArticleApi.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,ONLYARTICLEAPI")]
         public async Task<IActionResult> Create([FromBody] CreateArticleRequest request, CancellationToken cancellationToken)
         {
             var representation = await _mediator.Send(request.ToCommand(), cancellationToken);
@@ -32,7 +35,10 @@ namespace ArticleApi.Controllers
 
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,ONLYARTICLEAPI")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateArticleRequest request, CancellationToken cancellationToken)
         {
             await _mediator.Send(request.ToCommand(id), cancellationToken);
@@ -42,9 +48,10 @@ namespace ArticleApi.Controllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(DefaultExceptionDto))]
-        //[Authorize]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,ONLYARTICLEAPI")]
         public async Task<IActionResult> Delete([FromRoute] Guid id, CancellationToken cancellationToken)
         {
             await _mediator.Send(new DeleteArticleCommand()
@@ -56,7 +63,10 @@ namespace ArticleApi.Controllers
         }
 
         [HttpGet]
-        [EnableQuery]
+        [EnableQuery(MaxTop =100, PageSize = 100)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ArticleDto>))]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
+        [Authorize(Roles = "ADMIN,MEMBER,ONLYARTICLEAPI")]
         public async Task<IActionResult> Get(ODataQueryOptions<ArticleDto> queryOptions, CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(new GetAllArticlesQuery()
