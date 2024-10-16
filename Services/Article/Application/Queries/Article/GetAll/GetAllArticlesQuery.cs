@@ -7,6 +7,6 @@ namespace Application.Queries.Article.GetAll
 
     public class GetAllArticlesQuery : IRequest<IEnumerable<ArticleDto>>
     {
-        public ODataQueryOptions<ArticleDto> QueryOptions {  get; set; }
+        public ODataQueryOptions<ArticleDto> QueryOptions { get; set; }
     }
 }

@@ -66,7 +66,7 @@ namespace Domain.Entities
             StarCount = starCount;
             Title = title;
 
-            if(string.IsNullOrWhiteSpace(title))
+            if (string.IsNullOrWhiteSpace(title))
             {
                 throw new ValidationException("Title is null or white space");
             }

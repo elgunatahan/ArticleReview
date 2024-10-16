@@ -31,7 +31,7 @@ namespace ArticleApi.Controllers
         {
             var representation = await _mediator.Send(request.ToCommand(), cancellationToken);
 
-            return Created("",new { id = representation.Id });
+            return Created("", new { id = representation.Id });
         }
 
         [HttpPut("{id}")]
@@ -64,7 +64,7 @@ namespace ArticleApi.Controllers
         }
 
         [HttpGet]
-        [EnableQuery(MaxTop =100, PageSize = 100)]
+        [EnableQuery(MaxTop = 100, PageSize = 100)]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ArticleDto>))]
         [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(DefaultExceptionDto))]
         [Authorize(Roles = "ADMIN,MEMBER,ONLYARTICLEAPI")]

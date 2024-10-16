@@ -20,7 +20,7 @@ namespace Application.Commands.Review.Create
         {
             var article = await _articleApiProxy.GetByIdAsync(request.ArticleId);
 
-            if(article == null)
+            if (article == null)
             {
                 throw new ArticleNotExistException(request.ArticleId);
             }

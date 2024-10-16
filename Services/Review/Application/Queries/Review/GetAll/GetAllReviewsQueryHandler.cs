@@ -21,7 +21,7 @@ namespace Application.Queries.Review.GetAll
 
         public async Task<IEnumerable<ReviewDto>> Handle(GetAllReviewsQuery request, CancellationToken cancellationToken)
         {
-            string cacheKey = GenerateBase64Key(request.QueryOptions);
+            string cacheKey = request.QueryOptions != null ? GenerateBase64Key(request.QueryOptions) : "default_cache_key";
 
             var cachedArticles = await _cache.GetStringAsync(cacheKey, cancellationToken);
             if (!string.IsNullOrEmpty(cachedArticles))
@@ -31,22 +31,22 @@ namespace Application.Queries.Review.GetAll
 
             IQueryable<ReviewDto> articles = _reviewRepository.GetQueryable();
 
-            if (request.QueryOptions.Filter != null)
+            if (request.QueryOptions?.Filter != null)
             {
                 articles = request.QueryOptions.Filter.ApplyTo(articles, new ODataQuerySettings()) as IQueryable<ReviewDto>;
             }
 
-            if (request.QueryOptions.OrderBy != null)
+            if (request.QueryOptions?.OrderBy != null)
             {
                 articles = request.QueryOptions.OrderBy.ApplyTo(articles, new ODataQuerySettings()) as IQueryable<ReviewDto>;
             }
 
-            if (request.QueryOptions.Skip != null)
+            if (request.QueryOptions?.Skip != null)
             {
                 articles = articles.Skip((int)request.QueryOptions.Skip.Value);
             }
 
-            if (request.QueryOptions.Top != null)
+            if (request.QueryOptions?.Top != null)
             {
                 articles = articles.Take((int)request.QueryOptions.Top.Value);
             }

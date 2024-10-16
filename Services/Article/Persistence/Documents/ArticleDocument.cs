@@ -1,11 +1,10 @@
 ﻿using Domain.Entities;
 using Domain.ValueObjects;
-using MongoDB.Bson.Serialization.Attributes;
 using Persistence.Interfaces;
 
 namespace Persistence.Documents
 {
-    public class ArticleDocument: IDocument
+    public class ArticleDocument : IDocument
     {
         public Guid Id { get; set; }
         public int Version { get; set; }

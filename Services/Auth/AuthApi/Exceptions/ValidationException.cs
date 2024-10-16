@@ -1,6 +1,4 @@
-﻿using FluentValidation.Results;
-
-namespace AuthApi.Exceptions
+﻿namespace AuthApi.Exceptions
 {
     public class ValidationException : Exception
     {

@@ -32,7 +32,7 @@ namespace Persistence.Repositories
                     Version = x.Version
                 });
         }
-            
+
         public async Task CreateAsync(Article article, CancellationToken cancellationToken)
         {
             await InsertOneWithVersioning((ArticleDocument)article, article, cancellationToken);

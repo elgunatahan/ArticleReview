@@ -1,6 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Conventions;
+﻿using AuthApi.Documents;
 using MongoDB.Bson.Serialization;
-using AuthApi.Documents;
+using MongoDB.Bson.Serialization.Conventions;
 
 namespace AuthApi.Common
 {

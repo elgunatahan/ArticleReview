@@ -4,7 +4,7 @@ using Persistence.Interfaces;
 
 namespace Persistence.Documents
 {
-    public class ReviewDocument: IDocument
+    public class ReviewDocument : IDocument
     {
         public Guid Id { get; set; }
         public int Version { get; set; }

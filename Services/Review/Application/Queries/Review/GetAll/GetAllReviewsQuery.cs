@@ -7,6 +7,6 @@ namespace Application.Queries.Review.GetAll
 
     public class GetAllReviewsQuery : IRequest<IEnumerable<ReviewDto>>
     {
-        public ODataQueryOptions<ReviewDto> QueryOptions {  get; set; }
+        public ODataQueryOptions<ReviewDto> QueryOptions { get; set; }
     }
 }

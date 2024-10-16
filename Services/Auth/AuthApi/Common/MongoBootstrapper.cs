@@ -53,7 +53,7 @@ namespace AuthApi.Common
                     Role = "ADMIN"
                 };
 
-                collection.InsertOne(user); 
+                collection.InsertOne(user);
             }
 
 

@@ -28,7 +28,7 @@ namespace Application.Queries.Review.GetById
 
             Domain.Entities.Review review = await _reviewRepository.GetByIdAsync(request.Id, cancellationToken);
 
-            if(review == null)
+            if (review == null)
             {
                 throw new ReviewNotFoundException(request.Id);
             }

@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Domain.Repositories
 {
-    public interface IArticleRepository 
+    public interface IArticleRepository
     {
         IQueryable<ArticleDto> GetQueryable();
 

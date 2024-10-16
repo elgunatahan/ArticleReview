@@ -17,7 +17,7 @@ namespace Application.Commands.Article.Delete
         {
             Domain.Entities.Article article = await _articleRepository.GetByIdAsync(request.Id, cancellationToken);
 
-            if(article == null)
+            if (article == null)
             {
                 throw new ArticleNotFoundException(request.Id);
             }
