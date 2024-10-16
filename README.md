@@ -1,7 +1,6 @@
 # ArticleReview
 
 # Running 
-
 - install docker
 - run `docker compose up` in terminal 
 
@@ -81,7 +80,7 @@ Post => Create Article
 curl --location 'http://localhost:7000/api/v1/Articles' \
 --header 'accept: */*' \
 --header 'Content-Type: application/json;odata.metadata=minimal;odata.streaming=true' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDg4ZGQwNy1jMWM0LTQxYmMtOGY0OC0zZjI0OTQ5NTI0NmQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQxMDg5LCJpc3MiOiJLbG9pYSJ9.M14aBJEr3J8z2JkiubKtiNQq2jw8ZbmWACIJqPoYvJYx_TNdvJQfkJE6XMSuLCEFlPlIMLKHp1TOcd-S2JNKPqJaM8ie_y0q4JivJ3iYztDrU6z9N47STMkethKPaLn2x53oWmSw63nYirTJsnUOlYsZXankhMpi4SW890OXZxIhbxbmYodtrBSQygYXIaGD63vJPI5qUvPjWkUSsFhSSUUL4vj0duuZkjst4c80DTc5Wezte3ophhZup0eDFQCpJ3HBbg_RvbNqk63nVIJZ4bmq8delXDaEp5JwhtI5GKAxMsOCVqIcc9OYewsX9O72H-beGSwohq8NtznadkfEvQ' \
+--header 'Authorization: Bearer {{token}}' \
 --data '{
   "author": "string",
   "articleContent": "string",
@@ -94,7 +93,7 @@ PUT => Update Article
 curl --location --request PUT 'http://localhost:7000/api/v1/Articles/0447b136-f0d9-4491-a871-ff35eba13ee5' \
 --header 'accept: */*' \
 --header 'Content-Type: application/json;odata.metadata=minimal;odata.streaming=true' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDg4ZGQwNy1jMWM0LTQxYmMtOGY0OC0zZjI0OTQ5NTI0NmQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQxMDg5LCJpc3MiOiJLbG9pYSJ9.M14aBJEr3J8z2JkiubKtiNQq2jw8ZbmWACIJqPoYvJYx_TNdvJQfkJE6XMSuLCEFlPlIMLKHp1TOcd-S2JNKPqJaM8ie_y0q4JivJ3iYztDrU6z9N47STMkethKPaLn2x53oWmSw63nYirTJsnUOlYsZXankhMpi4SW890OXZxIhbxbmYodtrBSQygYXIaGD63vJPI5qUvPjWkUSsFhSSUUL4vj0duuZkjst4c80DTc5Wezte3ophhZup0eDFQCpJ3HBbg_RvbNqk63nVIJZ4bmq8delXDaEp5JwhtI5GKAxMsOCVqIcc9OYewsX9O72H-beGSwohq8NtznadkfEvQ' \
+--header 'Authorization: Bearer {{token}}' \
 --data '{
   "author": "string",
   "articleContent": "string",
@@ -107,15 +106,15 @@ DELETE => Soft Delete Article
 curl --location --request DELETE 'http://localhost:7000/api/v1/Articles/0447b136-f0d9-4491-a871-ff35eba13ee5' \
 --header 'accept: */*' \
 --header 'Content-Type: application/json;odata.metadata=minimal;odata.streaming=true' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDg4ZGQwNy1jMWM0LTQxYmMtOGY0OC0zZjI0OTQ5NTI0NmQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQxMDg5LCJpc3MiOiJLbG9pYSJ9.M14aBJEr3J8z2JkiubKtiNQq2jw8ZbmWACIJqPoYvJYx_TNdvJQfkJE6XMSuLCEFlPlIMLKHp1TOcd-S2JNKPqJaM8ie_y0q4JivJ3iYztDrU6z9N47STMkethKPaLn2x53oWmSw63nYirTJsnUOlYsZXankhMpi4SW890OXZxIhbxbmYodtrBSQygYXIaGD63vJPI5qUvPjWkUSsFhSSUUL4vj0duuZkjst4c80DTc5Wezte3ophhZup0eDFQCpJ3HBbg_RvbNqk63nVIJZ4bmq8delXDaEp5JwhtI5GKAxMsOCVqIcc9OYewsX9O72H-beGSwohq8NtznadkfEvQ'
+--header 'Authorization: Bearer {{token}}'
 
 GET => Can Search with filter, top, skip, orderby, select
 curl --location 'http://localhost:7000/api/v1/articles?%24select=id&%24top=100' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzODQwNTI1MS1hN2ZmLTQxZTgtYjEyMS05YTczOWVjZDE3NzgiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQwMzMyLCJpc3MiOiJLbG9pYSJ9.LsRypZcezh5RYhWMDa06q8pdVVn-jDPUcbGodEQNHy1h0Qy0g53tdHVBG14EjXHomFYGmUEBr0BQCbbBuII23ueXS1uqN354xYZT-mVtlyaYnOWMd9N7fdYRBcGvJo55yELBVoeB3lsCiCFUshZBywgaH-zLtzaaCHoP9VQ9lYDNT8FvIT1u0F91cz5CDd9dXli0oW0UWZnC1jRLpAI7brpk2fxZ-sZq4Ge-9KTh9nhiuP3w0KfJBMwhhg-Z2JBfxWHjoXnR-rFFNY7nlkVVib9W_18VwziQgS_ociogj4bWzwXE-mvifDKSIHaCAQ_2nmGfOxadvuWTDitPghdUlw'
+--header 'Authorization: Bearer {{token}}'
 
 GET => Get By Id
-curl --location 'http://localhost:7000/api/v1/articles/bcd29dd7-04d9-4fc5-9129-d013fb57cb56' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzODQwNTI1MS1hN2ZmLTQxZTgtYjEyMS05YTczOWVjZDE3NzgiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQwMzMyLCJpc3MiOiJLbG9pYSJ9.LsRypZcezh5RYhWMDa06q8pdVVn-jDPUcbGodEQNHy1h0Qy0g53tdHVBG14EjXHomFYGmUEBr0BQCbbBuII23ueXS1uqN354xYZT-mVtlyaYnOWMd9N7fdYRBcGvJo55yELBVoeB3lsCiCFUshZBywgaH-zLtzaaCHoP9VQ9lYDNT8FvIT1u0F91cz5CDd9dXli0oW0UWZnC1jRLpAI7brpk2fxZ-sZq4Ge-9KTh9nhiuP3w0KfJBMwhhg-Z2JBfxWHjoXnR-rFFNY7nlkVVib9W_18VwziQgS_ociogj4bWzwXE-mvifDKSIHaCAQ_2nmGfOxadvuWTDitPghdUlw'
+curl --location 'http://localhost:7000/api/v1/articles/{{id}}' \
+--header 'Authorization: Bearer {{token}}'
 ```
 
 
@@ -128,7 +127,7 @@ POST => Create Review
 curl --location 'http://localhost:7002/api/v1/reviews' \
 --header 'accept: */*' \
 --header 'Content-Type: application/json;odata.metadata=minimal;odata.streaming=true' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDg4ZGQwNy1jMWM0LTQxYmMtOGY0OC0zZjI0OTQ5NTI0NmQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQxMDg5LCJpc3MiOiJLbG9pYSJ9.M14aBJEr3J8z2JkiubKtiNQq2jw8ZbmWACIJqPoYvJYx_TNdvJQfkJE6XMSuLCEFlPlIMLKHp1TOcd-S2JNKPqJaM8ie_y0q4JivJ3iYztDrU6z9N47STMkethKPaLn2x53oWmSw63nYirTJsnUOlYsZXankhMpi4SW890OXZxIhbxbmYodtrBSQygYXIaGD63vJPI5qUvPjWkUSsFhSSUUL4vj0duuZkjst4c80DTc5Wezte3ophhZup0eDFQCpJ3HBbg_RvbNqk63nVIJZ4bmq8delXDaEp5JwhtI5GKAxMsOCVqIcc9OYewsX9O72H-beGSwohq8NtznadkfEvQ' \
+--header 'Authorization: Bearer {{token}}' \
 --data '{
   "articleId": "257f278a-46b1-4480-a5c9-fbb71a389570",
   "reviewer": "string",
@@ -139,7 +138,7 @@ PUT => Update Review
 curl --location --request PUT 'http://localhost:7002/api/v1/reviews/bcab0a51-6cbb-46d8-b590-1271384c07a7' \
 --header 'accept: */*' \
 --header 'Content-Type: application/json;odata.metadata=minimal;odata.streaming=true' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDg4ZGQwNy1jMWM0LTQxYmMtOGY0OC0zZjI0OTQ5NTI0NmQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQxMDg5LCJpc3MiOiJLbG9pYSJ9.M14aBJEr3J8z2JkiubKtiNQq2jw8ZbmWACIJqPoYvJYx_TNdvJQfkJE6XMSuLCEFlPlIMLKHp1TOcd-S2JNKPqJaM8ie_y0q4JivJ3iYztDrU6z9N47STMkethKPaLn2x53oWmSw63nYirTJsnUOlYsZXankhMpi4SW890OXZxIhbxbmYodtrBSQygYXIaGD63vJPI5qUvPjWkUSsFhSSUUL4vj0duuZkjst4c80DTc5Wezte3ophhZup0eDFQCpJ3HBbg_RvbNqk63nVIJZ4bmq8delXDaEp5JwhtI5GKAxMsOCVqIcc9OYewsX9O72H-beGSwohq8NtznadkfEvQ' \
+--header 'Authorization: Bearer {{token}}' \
 --data '{
   "articleId": "257f278a-46b1-4480-a5c9-fbb71a389570",
   "reviewer": "string",
@@ -150,17 +149,17 @@ DELETE => Soft Delete Review
 curl --location --request DELETE 'http://localhost:7002/api/v1/reviews/bcab0a51-6cbb-46d8-b590-1271384c07a7' \
 --header 'accept: */*' \
 --header 'Content-Type: application/json;odata.metadata=minimal;odata.streaming=true' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5MDg4ZGQwNy1jMWM0LTQxYmMtOGY0OC0zZjI0OTQ5NTI0NmQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQxMDg5LCJpc3MiOiJLbG9pYSJ9.M14aBJEr3J8z2JkiubKtiNQq2jw8ZbmWACIJqPoYvJYx_TNdvJQfkJE6XMSuLCEFlPlIMLKHp1TOcd-S2JNKPqJaM8ie_y0q4JivJ3iYztDrU6z9N47STMkethKPaLn2x53oWmSw63nYirTJsnUOlYsZXankhMpi4SW890OXZxIhbxbmYodtrBSQygYXIaGD63vJPI5qUvPjWkUSsFhSSUUL4vj0duuZkjst4c80DTc5Wezte3ophhZup0eDFQCpJ3HBbg_RvbNqk63nVIJZ4bmq8delXDaEp5JwhtI5GKAxMsOCVqIcc9OYewsX9O72H-beGSwohq8NtznadkfEvQ'
+--header 'Authorization: Bearer {{token}}'
 
 GET => Can Search with filter, top, skip, orderby, select
 curl --location 'http://localhost:7002/api/v1/reviews' \
 --header 'accept: */*' \
 --header 'Content-Type: application/json;odata.metadata=minimal;odata.streaming=true' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3MWZiYTJjYi0yZjIxLTQ3MTEtOTEzMC1hZTE2YWYwNTI4YzYiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQxNzA3LCJpc3MiOiJLbG9pYSJ9.Lm36yJ3i1Ob2_1r2bX_C5oT9YpsCaYwQbjVXk1uJgj17Cs_MoOmZavxcCG3I85VPZxDXjlmmdIlvfQgG89HMnmioYymRTTi7AMC-0G1Dt6dLovHwGPOHP0FpX9J13qJdzjtWj6e_3yZcQaXKjuWryiv1ErYhgRv6ufPRlw6FsYcl17hyGRd3V-fo6yc7Vd0mzDUbcrIw-op63lqFX_tYhVlULH_SEeiRrHKqJnG0ZwmtpGdAsL8F6dpjwZhwxWatTKKalmBYPm9Y95ouO07L_02qnpIyet2eHThmO-EclyDPPvDYxlccWMeSh2eLGnMBzvJcd-lONSbYm2nvhB0UqQ'
+--header 'Authorization: Bearer {{token}}'
 
 GET => Get By Id
-curl --location 'http://localhost:7002/api/v1/reviews/89210896-cbe0-4d0a-82bb-e939d5750dfb' \
+curl --location 'http://localhost:7002/api/v1/reviews/{{id}}' \
 --header 'accept: */*' \
 --header 'Content-Type: application/json;odata.metadata=minimal;odata.streaming=true' \
---header 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3MWZiYTJjYi0yZjIxLTQ3MTEtOTEzMC1hZTE2YWYwNTI4YzYiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjRkMTQ3Zjg0LTk1NDItNGRmYS05NWY0LTdlOWM5OGZjMDZjNiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJBZG1pbiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFETUlOIiwiZXhwIjoxNzI5MDQxNzA3LCJpc3MiOiJLbG9pYSJ9.Lm36yJ3i1Ob2_1r2bX_C5oT9YpsCaYwQbjVXk1uJgj17Cs_MoOmZavxcCG3I85VPZxDXjlmmdIlvfQgG89HMnmioYymRTTi7AMC-0G1Dt6dLovHwGPOHP0FpX9J13qJdzjtWj6e_3yZcQaXKjuWryiv1ErYhgRv6ufPRlw6FsYcl17hyGRd3V-fo6yc7Vd0mzDUbcrIw-op63lqFX_tYhVlULH_SEeiRrHKqJnG0ZwmtpGdAsL8F6dpjwZhwxWatTKKalmBYPm9Y95ouO07L_02qnpIyet2eHThmO-EclyDPPvDYxlccWMeSh2eLGnMBzvJcd-lONSbYm2nvhB0UqQ'
+--header 'Authorization: Bearer {{token}}'
 ```
