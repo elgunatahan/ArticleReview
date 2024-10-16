@@ -5,6 +5,10 @@
 - install docker
 - run `docker compose up` in terminal 
 
+# Auth API
+- AuthApi API will start at port 7004
+- For swagger `http://localhost:7004/swagger/index.html`
+
 # Article API  
 - Article API will start at port 7000
 - For swagger `http://localhost:7000/swagger/index.html`
@@ -12,10 +16,6 @@
 # Review API  
 - Review API will start at port 7002
 - For swagger `http://localhost:7002/swagger/index.html`
-
-# Auth API
-- AuthApi API will start at port 7004
-- For swagger `http://localhost:7004/swagger/index.html`
 
 # Tests
 - UnitTests
